@@ -5,11 +5,11 @@ defmodule Exfun do
   from previous pipeline stage.
   ## Examples
 
-  iex(1)> %{a: 4} |> Exfun.pipe_fn(fn x -> x.a end) 
+  iex(1)> %{a: 4} |> Exfun.pipe_into(fn x -> x.a end) 
   4
 
   """
-  def pipe_fn(val, fun) do 
+  def pipe_into(val, fun) do 
     fun.(val)
   end
 
