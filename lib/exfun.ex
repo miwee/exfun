@@ -32,6 +32,3 @@ defmodule Exfun do
     Dict.put(m, key, value)
   end  
 end
-
-defmodule Exfun.Macros do
-end
