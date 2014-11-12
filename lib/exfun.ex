@@ -14,6 +14,21 @@ defmodule Exfun do
   end
 
   @doc """
+  Inspects `val` and returns `val`, useful with |> operator
+  TBD: How to test for IO.inspect?
+  
+  ## Examples
+
+  iex(1)> %{a: 4} |> Exfun.pipe_inspect() |> Dict.put(:b, 6)
+  %{a: 4, b: 6} 
+
+  """
+  def pipe_inspect(val) do 
+    IO.inspect val
+    val
+  end
+
+  @doc """
   Put `value` for `key` in Dict `m`, 
   unless `value` is nil
   ## Examples
