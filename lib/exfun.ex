@@ -46,4 +46,79 @@ defmodule Exfun do
   def put_unless_nil(m, key, value) when is_map(m) do 
     Dict.put(m, key, value)
   end  
+
+  @doc """
+  Convert Erlang terms to Elixir terms. 
+  Useful for working with erlang libraries.
+  As of now it supports following cases:
+    1. Erlang strings are list, while Elixir strings are binary
+    2. Some Erlang libraries use :null, while Elixir has nil
+
+  ## Examples
+
+  iex(1)> 'nodes' |> Exfun.to_elixir_terms() 
+  "nodes"
+  iex(2)> "nodes" |> Exfun.to_elixir_terms() 
+  "nodes"
+  iex(3)> {:ok, 'nodes'} |> Exfun.to_elixir_terms() 
+  {:ok, "nodes"}
+  iex(4)> :null |> Exfun.to_elixir_terms() 
+  nil
+  iex(5)> {123, 456} |> Exfun.to_elixir_terms() 
+  {123, 456}
+
+  """
+  def to_elixir_terms(x) when is_list(x) do 
+    List.to_string(x)
+  end  
+
+  def to_elixir_terms({t, x}) when is_atom(t) do 
+    {t, to_elixir_terms(x)}
+  end  
+
+  def to_elixir_terms(:null) do 
+    nil
+  end  
+
+  def to_elixir_terms(x) do 
+    x
+  end  
+
+  @doc """
+  Convert Elixir terms to Erlang terms. 
+  Useful for working with erlang libraries.
+  As of now it supports following cases:
+    1. Erlang strings are char lists, while Elixir strings are binary
+    2. Some Erlang libraries use :null, while Elixir has nil
+
+  ## Examples
+
+  iex(1)> "nodes" |> Exfun.to_erlang_terms() 
+  'nodes'
+  iex(2)> 'nodes' |> Exfun.to_erlang_terms() 
+  'nodes'
+  iex(3)> {:ok, "nodes"} |> Exfun.to_erlang_terms() 
+  {:ok, 'nodes'}
+  iex(4)> nil |> Exfun.to_erlang_terms() 
+  :null
+  iex(5)> {123, 456} |> Exfun.to_erlang_terms() 
+  {123, 456}
+
+  """
+  def to_erlang_terms(x) when is_binary(x) do 
+    to_char_list(x)
+  end  
+
+  def to_erlang_terms({t, x}) when is_atom(t) do 
+    {t, to_erlang_terms(x)}
+  end  
+
+  def to_erlang_terms(nil) do 
+    :null
+  end  
+
+  def to_erlang_terms(x) do 
+    x
+  end  
+
 end
