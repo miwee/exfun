@@ -64,20 +64,40 @@ defmodule Exfun do
   {:ok, "nodes"}
   iex(4)> :null |> Exfun.to_elixir_terms() 
   nil
-  iex(5)> {123, 456} |> Exfun.to_elixir_terms() 
-  {123, 456}
+  iex(5)> ['nodes', 'more'] |> Exfun.to_elixir_terms() 
+  ["nodes", "more"]
+  iex(6)> {:ok, ['nodes', 'more'], 123} |> Exfun.to_elixir_terms() 
+  {:ok, ["nodes", "more"], 123}
 
   """
+  def to_elixir_terms(:null) do 
+    nil
+  end  
+
   def to_elixir_terms(x) when is_list(x) do 
-    List.to_string(x)
+    n = Enum.count(x, fn t -> not is_integer(t) end)
+    case n do 
+      0 ->
+        to_string(x)
+
+      _ ->
+        Enum.map(x, &to_elixir_terms/1)
+    end
+  end  
+
+  def to_elixir_terms({:null, x}) do 
+    {nil, to_elixir_terms(x)}
   end  
 
   def to_elixir_terms({t, x}) when is_atom(t) do 
     {t, to_elixir_terms(x)}
   end  
 
-  def to_elixir_terms(:null) do 
-    nil
+  def to_elixir_terms(x) when is_tuple(x) do
+    x 
+    |> Tuple.to_list()
+    |> to_elixir_terms()
+    |> List.to_tuple()
   end  
 
   def to_elixir_terms(x) do 
@@ -103,18 +123,37 @@ defmodule Exfun do
   :null
   iex(5)> {123, 456} |> Exfun.to_erlang_terms() 
   {123, 456}
+  iex(6)> ["nodes", "more"] |> Exfun.to_erlang_terms() 
+  ['nodes', 'more']
+  iex(7)> {:ok, ["nodes", "more"], 123} |> Exfun.to_erlang_terms() 
+  {:ok, ['nodes', 'more'], 123} 
 
   """
+  def to_erlang_terms(nil) do 
+    :null
+  end  
+
+  def to_erlang_terms(x) when is_list(x) do 
+    Enum.map(x, &to_erlang_terms/1)
+  end  
+
   def to_erlang_terms(x) when is_binary(x) do 
     to_char_list(x)
+  end  
+
+  def to_erlang_terms({nil, x}) do 
+    {:null, to_erlang_terms(x)}
   end  
 
   def to_erlang_terms({t, x}) when is_atom(t) do 
     {t, to_erlang_terms(x)}
   end  
 
-  def to_erlang_terms(nil) do 
-    :null
+  def to_erlang_terms(x) when is_tuple(x) do
+    x 
+    |> Tuple.to_list()
+    |> to_erlang_terms()
+    |> List.to_tuple()
   end  
 
   def to_erlang_terms(x) do 
