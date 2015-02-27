@@ -1,51 +1,4 @@
 defmodule Exfun do
-  @doc """
-  Pipes `val` through `fun`, useful with |> operator
-  for transforming single (non-list) return values 
-  from previous pipeline stage.
-  ## Examples
-
-  iex(1)> %{a: 4} |> Exfun.pipe_apply(fn x -> x.a end) 
-  4
-
-  """
-  def pipe_apply(val, fun) do 
-    fun.(val)
-  end
-
-  @doc """
-  Inspects `val` and returns `val`, useful with |> operator
-  TBD: How to test for IO.inspect?
-  
-  ## Examples
-
-  iex(1)> %{a: 4} |> Exfun.pipe_inspect() |> Dict.put(:b, 6)
-  %{a: 4, b: 6} 
-
-  """
-  def pipe_inspect(val) do 
-    IO.inspect val
-    val
-  end
-
-  @doc """
-  Put `value` for `key` in Dict `m`, 
-  unless `value` is nil
-  ## Examples
-
-  iex(1)> %{a: 4, b: 5} |> Exfun.put_unless_nil(:a, 6) 
-  %{a: 6, b: 5}
-  iex(2)> %{a: 4, b: 5} |> Exfun.put_unless_nil(:a, nil) 
-  %{a: 4, b: 5}
-
-  """
-  def put_unless_nil(m, _key, nil) when is_map(m) do 
-    m
-  end  
-
-  def put_unless_nil(m, key, value) when is_map(m) do 
-    Dict.put(m, key, value)
-  end  
 
   @doc """
   Convert Erlang terms to Elixir terms. 
@@ -158,6 +111,85 @@ defmodule Exfun do
 
   def to_erlang_terms(x) do 
     x
+  end  
+
+  @doc """
+  String join function in Elixir terms
+
+  ## Examples
+
+  iex(1)> ["a", "b", "c"] |> Exfun.join(?,) 
+  "a,b,c"
+  iex(2)> ["a"] |> Exfun.join(?,) 
+  "a"
+  iex(3)> ["a", "b", "c"] |> Exfun.join(",") 
+  "a,b,c"
+  iex(4)> ["a"] |> Exfun.join(",") 
+  "a"
+
+  """
+  def join([a], _sep) when is_binary(a) do 
+    a
+  end
+
+  def join([h | t], sep) when is_binary(h) and (sep in 1..127) do
+    Enum.reduce(t, h, fn x, acc -> 
+      <<acc::binary, sep::integer, x::binary>> 
+    end)
+  end
+
+  def join([h | t], sep) when is_binary(h) and is_binary(sep) do 
+    Enum.reduce(t, h, fn x, acc -> 
+      <<acc::binary, sep::binary, x::binary>> 
+    end)
+  end
+
+  @doc """
+  Pipes `val` through `fun`, useful with |> operator
+  for transforming single (non-list) return values 
+  from previous pipeline stage.
+  ## Examples
+
+  iex(1)> %{a: 4} |> Exfun.pipe_apply(fn x -> x.a end) 
+  4
+
+  """
+  def pipe_apply(val, fun) do 
+    fun.(val)
+  end
+
+  @doc """
+  Inspects `val` and returns `val`, useful with |> operator
+  TBD: How to test for IO.inspect?
+  
+  ## Examples
+
+  iex(1)> %{a: 4} |> Exfun.pipe_inspect() |> Dict.put(:b, 6)
+  %{a: 4, b: 6} 
+
+  """
+  def pipe_inspect(val) do 
+    IO.inspect val
+    val
+  end
+
+  @doc """
+  Put `value` for `key` in Dict `m`, 
+  unless `value` is nil
+  ## Examples
+
+  iex(1)> %{a: 4, b: 5} |> Exfun.put_unless_nil(:a, 6) 
+  %{a: 6, b: 5}
+  iex(2)> %{a: 4, b: 5} |> Exfun.put_unless_nil(:a, nil) 
+  %{a: 4, b: 5}
+
+  """
+  def put_unless_nil(m, _key, nil) when is_map(m) do 
+    m
+  end  
+
+  def put_unless_nil(m, key, value) when is_map(m) do 
+    Dict.put(m, key, value)
   end  
 
 end
