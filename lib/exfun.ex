@@ -192,4 +192,168 @@ defmodule Exfun do
     Dict.put(m, key, value)
   end  
 
+  @doc """
+  Returns a hex encoded binary from a list, binary or integer.
+
+  ## Examples
+
+      iex> Exfun.hex_encode("12345678")
+      "3132333435363738"
+
+      iex> Exfun.hex_encode('12345678')
+      "3132333435363738"
+
+      iex> Exfun.hex_encode("\x01\x02\x03\x04")
+      "01020304"
+
+      iex> Exfun.hex_encode([1, 2, 3, 4])
+      "01020304"
+
+      iex> Exfun.hex_encode(12345678)
+      "BC614E"
+  """
+  def hex_encode(str) when is_binary(str) or is_list(str) do
+    hex_encode_(str, "")
+  end
+
+  def hex_encode(int) when is_integer(int) do
+    Integer.to_string(int, 16)
+  end
+
+  defp hex_encode_(<<>>, acc) do
+    acc
+  end
+
+  defp hex_encode_(<<x::size(8), remain::binary>>, acc) do
+    hex_encode_step_(x, remain, acc)
+  end
+
+  defp hex_encode_([], acc) do
+    acc
+  end
+
+  defp hex_encode_([x | remain], acc) do
+    hex_encode_step_(x, remain, acc)
+  end
+
+  defp hex_encode_step_(x, remain, acc) do
+    case Integer.to_string(x, 16) do
+      <<a::size(8), b::size(8)>> ->
+        hex_encode_(remain, acc <> <<a, b>>)
+      <<b::size(8)>> ->
+        hex_encode_(remain, acc <> <<?0, b>>)
+    end
+  end
+
+  @doc """
+  Returns a decoded binary from a hex string in either list
+  or binary form.
+
+  ## Examples
+
+      iex> Exfun.hex_decode("3132333435363738")
+      "12345678"
+
+      iex> Exfun.hex_decode('3132333435363738')
+      "12345678"
+
+      iex> Exfun.hex_decode("0x3132333435363738")
+      "12345678"
+
+      iex> Exfun.hex_decode('0x3132333435363738')
+      "12345678"
+  """
+  def hex_decode(hex_str) when is_binary(hex_str) do
+    if String.starts_with?(hex_str, "0x") do
+      <<"0x", hex_str2::binary>> = hex_str
+      hex_decode_(hex_str2, "")
+    else 
+      hex_decode_(hex_str, "")   
+    end   
+  end
+
+  def hex_decode(hex_str) when is_list(hex_str) do 
+    [a, b | hex_str2] = hex_str
+    if [a, b] == '0x' do
+      hex_decode_(hex_str2, "")
+    else
+      hex_decode_(hex_str, "")
+    end
+  end
+
+  defp hex_decode_(<<>>, acc) do
+    acc
+  end
+
+  defp hex_decode_(<<x::size(8), y::size(8), remain::binary>>, acc) do
+    hex_decode_step_(x, y, remain, acc)
+  end
+
+  defp hex_decode_([], acc) do
+    acc
+  end
+
+  defp hex_decode_([x, y | remain], acc) do
+    hex_decode_step_(x, y, remain, acc)
+  end
+
+  defp hex_decode_step_(x, y, remain, acc) do
+    x2 = String.to_integer(<<x, y>>, 16)
+    hex_decode_(remain, acc <> <<x2::size(8)>>)
+  end
+
+  @doc """
+  Returns an hex string visual representation of a given 
+  list or binary.
+
+  ## Examples
+
+      iex> Exfun.hexify('ABcd')
+      "[0x41, 0x42, 0x63, 0x64]"
+
+      iex> Exfun.hexify("ABcd")
+      "<<0x41, 0x42, 0x63, 0x64>>"
+  """
+  def hexify(str) when is_list(str) do
+    "[" <> hexify_(str, "") <> "]"
+  end
+
+  def hexify(str) when is_binary(str) do
+    "<<" <> hexify_(str, "") <> ">>"
+  end
+
+  defp hexify_(<<x::size(8)>>, acc) do
+    hexify_step1_(x, acc)
+  end
+
+  defp hexify_(<<x::size(8), remain::binary>>, acc) do
+    hexify_step_(x, remain, acc)
+  end
+
+  defp hexify_([x], acc) do
+    hexify_step1_(x, acc)
+  end
+
+  defp hexify_([x | remain], acc) do
+    hexify_step_(x, remain, acc)
+  end
+
+  defp hexify_step1_(x, acc) do
+    case Integer.to_string(x, 16) do
+      <<a::size(8), b::size(8)>> ->
+        acc <> <<"0x", a, b>>
+      <<b::size(8)>> ->
+        acc <> <<"0x", ?0, b>>
+    end
+  end
+
+  defp hexify_step_(x, remain, acc) do
+    case Integer.to_string(x, 16) do
+      <<a::size(8), b::size(8)>> ->
+        hexify_(remain, acc <> <<"0x", a, b, ", ">>)
+      <<b::size(8)>> ->
+        hexify_(remain, acc <> <<"0x", ?0, b, ", ">>)
+    end
+  end
+
 end
