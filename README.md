@@ -1,5 +1,3 @@
-** Collection of small utility functions and macros for Elixir language **
-
 # Exfun and Exmac
 
 Exfun is a collection of small utility functions and Exmac is a collection of small utility macros for Elixir language, [check out Elixir's website](http://elixir-lang.org/).
