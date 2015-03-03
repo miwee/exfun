@@ -29,16 +29,13 @@ For complete list, please refer to the respective source files.
 
 Below is detail of some of the functions and macros
 
-```elixir
-  @doc """
   Convert Erlang terms to Elixir terms. 
   Useful for working with erlang libraries.
   As of now it supports following cases:
     1. Erlang strings are list, while Elixir strings are binary
     2. Some Erlang libraries use :null, while Elixir has nil
 
-  ## Examples
-
+```elixir
   iex(1)> 'nodes' |> Exfun.to_elixir_terms() 
   "nodes"
   iex(2)> "nodes" |> Exfun.to_elixir_terms() 
@@ -51,27 +48,21 @@ Below is detail of some of the functions and macros
   ["nodes", "more"]
   iex(6)> {:ok, ['nodes', 'more'], 123} |> Exfun.to_elixir_terms() 
   {:ok, ["nodes", "more"], 123}
+```
 
-  """
-
-  @doc """
   Inspects `val` and returns `val`, useful with |> operator
   
-  ## Examples
-
+```elixir
   iex(1)> %{a: 4} |> Exfun.pipe_inspect() |> Dict.put(:b, 6)
   %{a: 4, b: 6} 
+```
 
-  """
-
-  @doc """
   Creates a map from a list of variables
   `key` is variable name as `atom`
   `value` is variable value
   `key` is variable name as `binary`, if `use_binaries` option is set
-     
-  ## Examples
 
+```elixir
   iex(1)> require Exmac
   nil
   iex(2)> {a, b} = {4, 6}
@@ -80,15 +71,12 @@ Below is detail of some of the functions and macros
   %{a: 4, b: 6}
   iex(4)> Exmac.create_map([a, b], [use_binaries: true])
   %{"a" => 4, "b" => 6}
+```
 
-  """
-
-  @doc """
   Creates a list of variable name and value pair
   Useful for quick debugging of a list of variables
 
-  ## Examples
-
+```elixir
   iex(1)> require Exmac
   nil
   iex(2)> {a, b} = {4, 6}
@@ -97,6 +85,4 @@ Below is detail of some of the functions and macros
   %{d: {4, 6}}
   iex(3)> Exmac.inspect_vars([a, b, c])
   ["a = 4", "b = 6", "c = %{d: {4, 6}}"]
-
-  """  
 ```
