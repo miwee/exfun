@@ -29,15 +29,13 @@ For complete list, please refer to the respective source files.
 
 Below is detail of some of the functions and macros
 
+```
 Convert Erlang terms to Elixir terms. 
-
 Useful for working with erlang libraries.
-
 As of now it supports following cases:
-
   1. Erlang strings are list, while Elixir strings are binary
-
   2. Some Erlang libraries use :null, while Elixir has nil
+```
 
 ```elixir
   iex(1)> 'nodes' |> Exfun.to_elixir_terms() 
@@ -61,13 +59,12 @@ Inspects `val` and returns `val`, useful with |> operator
   %{a: 4, b: 6} 
 ```
 
+```
 Creates a map from a list of variables
-
 `key` is variable name as `atom`
-
 `value` is variable value
-
 `key` is variable name as `binary`, if `use_binaries` option is set
+```
 
 ```elixir
   iex(1)> require Exmac
@@ -80,9 +77,10 @@ Creates a map from a list of variables
   %{"a" => 4, "b" => 6}
 ```
 
+```
 Creates a list of variable name and value pair
-
 Useful for quick debugging of a list of variables
+```
 
 ```elixir
   iex(1)> require Exmac
