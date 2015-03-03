@@ -114,37 +114,6 @@ defmodule Exfun do
   end  
 
   @doc """
-  String join function in Elixir terms
-
-  ## Examples
-
-  iex(1)> ["a", "b", "c"] |> Exfun.join(?,) 
-  "a,b,c"
-  iex(2)> ["a"] |> Exfun.join(?,) 
-  "a"
-  iex(3)> ["a", "b", "c"] |> Exfun.join(",") 
-  "a,b,c"
-  iex(4)> ["a"] |> Exfun.join(",") 
-  "a"
-
-  """
-  def join([a], _sep) when is_binary(a) do 
-    a
-  end
-
-  def join([h | t], sep) when is_binary(h) and (sep in 1..127) do
-    Enum.reduce(t, h, fn x, acc -> 
-      <<acc::binary, sep::integer, x::binary>> 
-    end)
-  end
-
-  def join([h | t], sep) when is_binary(h) and is_binary(sep) do 
-    Enum.reduce(t, h, fn x, acc -> 
-      <<acc::binary, sep::binary, x::binary>> 
-    end)
-  end
-
-  @doc """
   Pipes `val` through `fun`, useful with |> operator
   for transforming single (non-list) return values 
   from previous pipeline stage.
