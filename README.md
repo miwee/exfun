@@ -29,6 +29,8 @@ For complete list, please refer to the respective source files.
 
 Below is detail of some of the functions and macros
 
+#### Exfun.to_elixir_terms ####
+
 ```
 Convert Erlang terms to Elixir terms. 
 Useful for working with erlang libraries.
@@ -52,12 +54,18 @@ As of now it supports following cases:
   {:ok, ["nodes", "more"], 123}
 ```
 
+#### Exfun.pipe_inspect ####
+
+```
 Inspects `val` and returns `val`, useful with |> operator
-  
+```
+
 ```elixir
   iex(1)> %{a: 4} |> Exfun.pipe_inspect() |> Dict.put(:b, 6)
   %{a: 4, b: 6} 
 ```
+
+#### Exmac.create_map ####
 
 ```
 Creates a map from a list of variables
@@ -76,6 +84,8 @@ Creates a map from a list of variables
   iex(4)> Exmac.create_map([a, b], [use_binaries: true])
   %{"a" => 4, "b" => 6}
 ```
+
+#### Exmac.inspect_vars ####
 
 ```
 Creates a list of variable name and value pair
