@@ -62,6 +62,7 @@ Inspects `val` and returns `val`, useful with |> operator
 
 ```elixir
   iex(1)> %{a: 4} |> Exfun.pipe_inspect() |> Dict.put(:b, 6)
+  %{a: 4}
   %{a: 4, b: 6} 
 ```
 
