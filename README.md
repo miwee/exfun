@@ -25,7 +25,9 @@ For using Exmac, just copy file lib/exmac.ex in your project's lib directory
 ## Examples
 Examples are part of the doctest strings within source files lib/exfun.ex and lib/exmac.ex
 
-For complete list, please refer to the respective source files. Below is detail of some of the functions and macros
+For complete list, please refer to the respective source files. 
+
+Below is detail of some of the functions and macros
 
 ```elixir
   @doc """
