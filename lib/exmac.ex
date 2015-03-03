@@ -1,4 +1,8 @@
 defmodule Exmac do
+  @moduledoc """
+  Collection of small utility macros for Elixir language
+  """
+
   @doc """
   Creates a map from a list of variables
   `key` is variable name as `atom`

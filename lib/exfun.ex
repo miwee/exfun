@@ -1,4 +1,7 @@
 defmodule Exfun do
+  @moduledoc """
+  Collection of small utility functions for Elixir language
+  """
 
   @doc """
   Convert Erlang terms to Elixir terms. 
