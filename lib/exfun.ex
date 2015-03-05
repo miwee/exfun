@@ -184,37 +184,16 @@ defmodule Exfun do
       iex> Exfun.hex_encode(12345678)
       "BC614E"
   """
-  def hex_encode(str) when is_binary(str) or is_list(str) do
-    hex_encode_(str, "")
+  def hex_encode(str) when is_binary(str) do
+    Base.encode16(str)
+  end
+
+  def hex_encode(str) when is_list(str) do
+    str |> to_string() |> Base.encode16()
   end
 
   def hex_encode(int) when is_integer(int) do
     Integer.to_string(int, 16)
-  end
-
-  defp hex_encode_(<<>>, acc) do
-    acc
-  end
-
-  defp hex_encode_(<<x::size(8), remain::binary>>, acc) do
-    hex_encode_step_(x, remain, acc)
-  end
-
-  defp hex_encode_([], acc) do
-    acc
-  end
-
-  defp hex_encode_([x | remain], acc) do
-    hex_encode_step_(x, remain, acc)
-  end
-
-  defp hex_encode_step_(x, remain, acc) do
-    case Integer.to_string(x, 16) do
-      <<a::size(8), b::size(8)>> ->
-        hex_encode_(remain, acc <> <<a, b>>)
-      <<b::size(8)>> ->
-        hex_encode_(remain, acc <> <<?0, b>>)
-    end
   end
 
   @doc """
@@ -238,40 +217,19 @@ defmodule Exfun do
   def hex_decode(hex_str) when is_binary(hex_str) do
     if String.starts_with?(hex_str, "0x") do
       <<"0x", hex_str2::binary>> = hex_str
-      hex_decode_(hex_str2, "")
+      Base.decode16!(hex_str2)
     else 
-      hex_decode_(hex_str, "")   
+      Base.decode16!(hex_str)
     end   
   end
 
   def hex_decode(hex_str) when is_list(hex_str) do 
     [a, b | hex_str2] = hex_str
     if [a, b] == '0x' do
-      hex_decode_(hex_str2, "")
+      hex_decode(hex_str2)
     else
-      hex_decode_(hex_str, "")
+      hex_str |> to_string() |> Base.decode16!()
     end
-  end
-
-  defp hex_decode_(<<>>, acc) do
-    acc
-  end
-
-  defp hex_decode_(<<x::size(8), y::size(8), remain::binary>>, acc) do
-    hex_decode_step_(x, y, remain, acc)
-  end
-
-  defp hex_decode_([], acc) do
-    acc
-  end
-
-  defp hex_decode_([x, y | remain], acc) do
-    hex_decode_step_(x, y, remain, acc)
-  end
-
-  defp hex_decode_step_(x, y, remain, acc) do
-    x2 = String.to_integer(<<x, y>>, 16)
-    hex_decode_(remain, acc <> <<x2::size(8)>>)
   end
 
   @doc """
