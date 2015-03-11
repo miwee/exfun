@@ -190,7 +190,13 @@ defmodule Exfun do
       iex> Exfun.hex_decode("3132333435363738")
       "12345678"
 
+      iex> Exfun.hex_decode("31 32 33 34 35 36 37 38")
+      "12345678"
+
       iex> Exfun.hex_decode('3132333435363738')
+      "12345678"
+
+      iex> Exfun.hex_decode('31 32 33 34 35 36 37 38')
       "12345678"
 
       iex> Exfun.hex_decode("0x3132333435363738")
@@ -200,6 +206,7 @@ defmodule Exfun do
       "12345678"
   """
   def hex_decode(hex_str) when is_binary(hex_str) do
+    hex_str = :binary.replace(hex_str, " ", "", [:global])
     if String.starts_with?(hex_str, "0x") do
       <<"0x", hex_str2::binary>> = hex_str
       Base.decode16!(hex_str2)
@@ -209,6 +216,7 @@ defmodule Exfun do
   end
 
   def hex_decode(hex_str) when is_list(hex_str) do 
+    hex_str = Enum.filter(hex_str, fn x -> x != ?\s end)
     [a, b | hex_str2] = hex_str
     if [a, b] == '0x' do
       hex_decode(hex_str2)
