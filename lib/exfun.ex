@@ -173,8 +173,8 @@ defmodule Exfun do
     Base.encode16(str)
   end
 
-  def hex_encode(str) when is_list(str) do
-    str |> to_string() |> Base.encode16()
+  def hex_encode(list) when is_list(list) do
+    list |> to_string() |> Base.encode16()
   end
 
   def hex_encode(int) when is_integer(int) do
@@ -204,25 +204,22 @@ defmodule Exfun do
 
       iex> Exfun.hex_decode('0x3132333435363738')
       "12345678"
+
+      iex> Exfun.hex_decode("0X3132333435363738")
+      "12345678"
+
+      iex> Exfun.hex_decode('0X3132333435363738')
+      "12345678"
   """
-  def hex_decode(hex_str) when is_binary(hex_str) do
-    hex_str = :binary.replace(hex_str, " ", "", [:global])
-    if String.starts_with?(hex_str, "0x") do
-      <<"0x", hex_str2::binary>> = hex_str
-      Base.decode16!(hex_str2)
-    else 
-      Base.decode16!(hex_str)
-    end   
+  def hex_decode(str) when is_binary(str) do
+    str
+    |> String.split(["0x", "0X", " "])
+    |> Enum.join()
+    |> Base.decode16!()  
   end
 
-  def hex_decode(hex_str) when is_list(hex_str) do 
-    hex_str = Enum.filter(hex_str, fn x -> x != ?\s end)
-    [a, b | hex_str2] = hex_str
-    if [a, b] == '0x' do
-      hex_decode(hex_str2)
-    else
-      hex_str |> to_string() |> Base.decode16!()
-    end
+  def hex_decode(list) when is_list(list) do 
+    list |> to_string() |> hex_decode()
   end
 
   @doc """
