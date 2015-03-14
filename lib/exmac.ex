@@ -69,7 +69,7 @@ defmodule Exmac do
   Prints a list of variable name and value pair
   Useful for quick debugging of a list of variables
   """
-  def print_vars(vars) do
+  defmacro print_vars(vars) do
     for {name, _, _} = var <- vars do
       quote do
         IO.puts "#{unquote(name)} = #{inspect unquote(var)}"
