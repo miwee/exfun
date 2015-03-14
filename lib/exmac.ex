@@ -72,7 +72,7 @@ defmodule Exmac do
   defmacro print_vars(vars) do
     for {name, _, _} = var <- vars do
       quote do
-        IO.puts "#{unquote(name)} = #{inspect unquote(var)}"
+        IO.inspect "#{unquote(name)} = #{inspect unquote(var)}"
       end
     end
   end
