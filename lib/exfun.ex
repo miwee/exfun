@@ -235,30 +235,30 @@ defmodule Exfun do
       "<<0x41, 0x42, 0x63, 0x64>>"
   """
   def hexify(str) when is_list(str) do
-    "[" <> hexify_(str, "") <> "]"
+    "[" <> p_hexify(str, "") <> "]"
   end
 
   def hexify(str) when is_binary(str) do
-    "<<" <> hexify_(str, "") <> ">>"
+    "<<" <> p_hexify(str, "") <> ">>"
   end
 
-  defp hexify_(<<x::size(8)>>, acc) do
-    hexify_step1_(x, acc)
+  defp p_hexify(<<x::size(8)>>, acc) do
+    p_hexify_step(x, acc)
   end
 
-  defp hexify_(<<x::size(8), remain::binary>>, acc) do
-    hexify_step_(x, remain, acc)
+  defp p_hexify(<<x::size(8), remain::binary>>, acc) do
+    p2_hexify_step(x, remain, acc)
   end
 
-  defp hexify_([x], acc) do
-    hexify_step1_(x, acc)
+  defp p_hexify([x], acc) do
+    p_hexify_step(x, acc)
   end
 
-  defp hexify_([x | remain], acc) do
-    hexify_step_(x, remain, acc)
+  defp p_hexify([x | remain], acc) do
+    p2_hexify_step(x, remain, acc)
   end
 
-  defp hexify_step1_(x, acc) do
+  defp p_hexify_step(x, acc) do
     case Integer.to_string(x, 16) do
       <<a::size(8), b::size(8)>> ->
         acc <> <<"0x", a, b>>
@@ -267,12 +267,12 @@ defmodule Exfun do
     end
   end
 
-  defp hexify_step_(x, remain, acc) do
+  defp p2_hexify_step(x, remain, acc) do
     case Integer.to_string(x, 16) do
       <<a::size(8), b::size(8)>> ->
-        hexify_(remain, acc <> <<"0x", a, b, ", ">>)
+        p_hexify(remain, acc <> <<"0x", a, b, ", ">>)
       <<b::size(8)>> ->
-        hexify_(remain, acc <> <<"0x", ?0, b, ", ">>)
+        p_hexify(remain, acc <> <<"0x", ?0, b, ", ">>)
     end
   end
 
