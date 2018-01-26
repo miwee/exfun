@@ -26,39 +26,40 @@ defmodule Exfun do
   {:ok, ["nodes", "more"], 123}
 
   """
-  def to_elixir_terms(:null) do 
+  def to_elixir_terms(:null) do
     nil
-  end  
+  end
 
-  def to_elixir_terms(x) when is_list(x) do 
+  def to_elixir_terms(x) when is_list(x) do
     n = Enum.count(x, fn t -> not is_integer(t) end)
-    case n do 
+
+    case n do
       0 ->
         to_string(x)
 
       _ ->
         Enum.map(x, &to_elixir_terms/1)
     end
-  end  
+  end
 
-  def to_elixir_terms({:null, x}) do 
+  def to_elixir_terms({:null, x}) do
     {nil, to_elixir_terms(x)}
-  end  
+  end
 
-  def to_elixir_terms({t, x}) when is_atom(t) do 
+  def to_elixir_terms({t, x}) when is_atom(t) do
     {t, to_elixir_terms(x)}
-  end  
+  end
 
   def to_elixir_terms(x) when is_tuple(x) do
-    x 
+    x
     |> Tuple.to_list()
     |> to_elixir_terms()
     |> List.to_tuple()
-  end  
+  end
 
-  def to_elixir_terms(x) do 
+  def to_elixir_terms(x) do
     x
-  end  
+  end
 
   @doc """
   Convert Elixir terms to Erlang terms. 
@@ -85,36 +86,36 @@ defmodule Exfun do
   {:ok, ['nodes', 'more'], 123} 
 
   """
-  def to_erlang_terms(nil) do 
+  def to_erlang_terms(nil) do
     :null
-  end  
+  end
 
-  def to_erlang_terms(x) when is_list(x) do 
+  def to_erlang_terms(x) when is_list(x) do
     Enum.map(x, &to_erlang_terms/1)
-  end  
+  end
 
-  def to_erlang_terms(x) when is_binary(x) do 
-    to_char_list(x)
-  end  
+  def to_erlang_terms(x) when is_binary(x) do
+    to_charlist(x)
+  end
 
-  def to_erlang_terms({nil, x}) do 
+  def to_erlang_terms({nil, x}) do
     {:null, to_erlang_terms(x)}
-  end  
+  end
 
-  def to_erlang_terms({t, x}) when is_atom(t) do 
+  def to_erlang_terms({t, x}) when is_atom(t) do
     {t, to_erlang_terms(x)}
-  end  
+  end
 
   def to_erlang_terms(x) when is_tuple(x) do
-    x 
+    x
     |> Tuple.to_list()
     |> to_erlang_terms()
     |> List.to_tuple()
-  end  
+  end
 
-  def to_erlang_terms(x) do 
+  def to_erlang_terms(x) do
     x
-  end  
+  end
 
   @doc """
   Pipes `val` through `fun`, useful with |> operator
@@ -126,7 +127,7 @@ defmodule Exfun do
   4
 
   """
-  def pipe_apply(val, fun) do 
+  def pipe_apply(val, fun) do
     fun.(val)
   end
 
@@ -141,13 +142,13 @@ defmodule Exfun do
   %{a: 4, b: 5}
 
   """
-  def put_unless_nil(m, _key, nil) when is_map(m) do 
+  def put_unless_nil(m, _key, nil) when is_map(m) do
     m
-  end  
+  end
 
-  def put_unless_nil(m, key, value) when is_map(m) do 
-    Dict.put(m, key, value)
-  end  
+  def put_unless_nil(m, key, value) when is_map(m) do
+    Map.put(m, key, value)
+  end
 
   @doc """
   Returns a hex encoded binary from a list, binary or integer.
@@ -215,10 +216,10 @@ defmodule Exfun do
     str
     |> String.split(["0x", "0X", " "])
     |> Enum.join()
-    |> Base.decode16!()  
+    |> Base.decode16!()
   end
 
-  def hex_decode(list) when is_list(list) do 
+  def hex_decode(list) when is_list(list) do
     list |> to_string() |> hex_decode()
   end
 
@@ -262,6 +263,7 @@ defmodule Exfun do
     case Integer.to_string(x, 16) do
       <<a::size(8), b::size(8)>> ->
         acc <> <<"0x", a, b>>
+
       <<b::size(8)>> ->
         acc <> <<"0x", ?0, b>>
     end
@@ -271,9 +273,9 @@ defmodule Exfun do
     case Integer.to_string(x, 16) do
       <<a::size(8), b::size(8)>> ->
         p_hexify(remain, acc <> <<"0x", a, b, ", ">>)
+
       <<b::size(8)>> ->
         p_hexify(remain, acc <> <<"0x", ?0, b, ", ">>)
     end
   end
-
 end

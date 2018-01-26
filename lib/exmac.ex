@@ -22,24 +22,26 @@ defmodule Exmac do
 
   """
   defmacro create_map(vars, opts \\ []) do
-    m = for {name, _, _} = var <- vars do 
-      quote do
-        options = unquote(opts)
-        case options do
-          [] ->
-            {unquote(name), unquote(var)}
-  
-          [use_binaries: true] ->
-            {"#{unquote(name)}", unquote(var)}
+    m =
+      for {name, _, _} = var <- vars do
+        quote do
+          options = unquote(opts)
+
+          case options do
+            [] ->
+              {unquote(name), unquote(var)}
+
+            [use_binaries: true] ->
+              {"#{unquote(name)}", unquote(var)}
+          end
         end
       end
-    end
 
     quote do
       unquote(m)
       |> Enum.into(%{})
     end
-  end  
+  end
 
   @doc """
   Creates a list of variable name and value pair
@@ -58,9 +60,9 @@ defmodule Exmac do
 
   """
   defmacro inspect_vars(vars) do
-    for {name, _, _} = var <- vars do 
+    for {name, _, _} = var <- vars do
       quote do
-        "#{unquote(name)} = #{inspect unquote(var)}"
+        "#{unquote(name)} = #{inspect(unquote(var))}"
       end
     end
   end
@@ -72,7 +74,7 @@ defmodule Exmac do
   defmacro print_vars(vars) do
     for {name, _, _} = var <- vars do
       quote do
-        IO.inspect "#{unquote(name)} = #{inspect unquote(var)}"
+        IO.inspect("#{unquote(name)} = #{inspect(unquote(var))}")
       end
     end
   end
