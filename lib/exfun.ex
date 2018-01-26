@@ -278,4 +278,48 @@ defmodule Exfun do
         p_hexify(remain, acc <> <<"0x", ?0, b, ", ">>)
     end
   end
+
+  @doc """
+  Returns a mixed ascii and binary visual representation of a given binary.
+
+  ## Examples
+
+      iex> Exfun.to_binfmt("CT:\x06\x87\r\n") |> IO.puts()
+      CT:\x06\x87
+  """
+  def to_binfmt("") do
+    ""
+  end
+
+  def to_binfmt(data) do
+    p_to_binfmt(data, [])
+  end
+
+  defp p_to_binfmt("", acc) do
+    acc |> :lists.reverse() |> :erlang.list_to_binary()
+  end
+
+  defp p_to_binfmt(<<x, r::binary>>, acc) do
+    p_to_binfmt(r, [p2_to_binfmt(x) | acc])
+  end
+
+  defp p2_to_binfmt(?\r) do
+    "\r"
+  end
+
+  defp p2_to_binfmt(?\n) do
+    "\n"
+  end
+
+  defp p2_to_binfmt(x) do
+    if List.ascii_printable?([x]) do
+      <<x>>
+    else
+      if x < 16 do
+        ~S{\x0} <> :erlang.integer_to_binary(x, 16)
+      else
+        ~S{\x} <> :erlang.integer_to_binary(x, 16)
+      end
+    end
+  end
 end
